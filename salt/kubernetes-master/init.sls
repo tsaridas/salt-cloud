@@ -34,3 +34,5 @@ run weave:
     - creates: /root/weave.yaml
     - require:
       - cmd: Install kubernetes
+      - cmd: get join command
+      - module: push config
