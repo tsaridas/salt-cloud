@@ -15,10 +15,6 @@ disable swap:
     - name: swapoff -a
     - unless: if [[ $(swapon | wc -l) = 2 ]]; then exit 1;fi
 
-Sync grains node:
-  module.run:
-    - name: saltutil.sync_grains
-
 install docker node:
   pkg.installed:
     - name: docker
