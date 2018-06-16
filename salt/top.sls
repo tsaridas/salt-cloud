@@ -1,11 +1,3 @@
-highstate_run:
-  local.state.apply:
-    - tgt: {{ data['id'] }}
-
-copy_pillar:
-  local.state.apply:
-    - tgt: salt-master
-[root@salt-master salt]# cat top.sls
 base:
   'kubernetes-master:True':
     - match: grain
