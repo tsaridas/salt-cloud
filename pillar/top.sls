@@ -1,0 +1,3 @@
+base:
+  '*':
+    - join_command
