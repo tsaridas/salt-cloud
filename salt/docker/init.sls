@@ -18,7 +18,6 @@ disable swap:
 install docker node:
   pkg.installed:
     - name: docker
-    - refresh: True
 
 docker running node:
   service.running:

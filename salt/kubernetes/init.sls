@@ -12,7 +12,6 @@ setup repo node:
 install kubeadm node:
   pkg.installed:
     - name: kubeadm
-    - refresh: True
 
 net.bridge.bridge-nf-call-ip6tables:
   sysctl.present:
