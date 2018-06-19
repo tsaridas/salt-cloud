@@ -218,6 +218,7 @@ def deployment_present(
         ret['changes']['{0}.{1}'.format(namespace, name)] = {
             'old': {},
             'new': res}
+        ret['result'] = True
     else:
 
         ret['changes'] = { }
@@ -294,6 +295,7 @@ def service_present(
         ret['changes']['{0}.{1}'.format(namespace, name)] = {
             'old': {},
             'new': res}
+        ret['result'] = True
     else:
         ret['changes'] = {}
         ret['result'] = True
@@ -652,28 +654,10 @@ def configmap_present(
         ret['changes']['{0}.{1}'.format(namespace, name)] = {
             'old': {},
             'new': res}
+        ret['result'] = True
     else:
-        if __opts__['test']:
-            ret['result'] = None
-            ret['comment'] = 'The configmap is going to be replaced'
-            return ret
-
-        # TODO: improve checks  # pylint: disable=fixme
-        log.info('Forcing the recreation of the service')
-        ret['comment'] = 'The configmap is already present. Forcing recreation'
-        res = __salt__['kubernetes.replace_configmap'](
-            name=name,
-            namespace=namespace,
-            data=data,
-            source=source,
-            template=template,
-            saltenv=__env__,
-            **kwargs)
-
-    ret['changes'] = {
-        'data': res['data']
-    }
-    ret['result'] = True
+        ret['changes'] = {}
+        ret['result'] = True
     return ret
 
 

@@ -3,17 +3,49 @@ kind: Deployment
 metadata:
   name: nginx-deployment
 spec:
+  progressDeadlineSeconds: 600
+  replicas: 8
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: nginx
-  replicas: 2 
-  template: 
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
     metadata:
+      creationTimestamp: null
       labels:
         app: nginx
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.7.9
+      - image: nginx:1.7.9
+        imagePullPolicy: Always
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - if [ -e /opt/index ]; then sed s/HOSTNAME/$(hostname -f)/g /opt/index > /usr/share/nginx/html/index.html; else ls -tla /opt > /tmp/ls;fi
+        name: nginx
         ports:
         - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt
+          name: nginx-index
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 444
+          name: nginx-index
+        name: nginx-index
