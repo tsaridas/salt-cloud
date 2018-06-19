@@ -28,7 +28,6 @@ copy config:
     - require:
       - cmd: Install kubernetes
 
-
 run weave:
   cmd.run:
     - name: curl https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n') -o /root/weave.yaml; kubectl apply -f /root/weave.yaml
@@ -37,3 +36,15 @@ run weave:
       - cmd: Install kubernetes
       - cmd: get join command
       - module: push config
+
+install pip:
+  pkg.installed:
+    - name: python2-pip
+
+install kubernetes module:
+  pip.installed:
+    - name: kubernetes == 2.0.0
+
+sync modules:
+  module.run:
+    - name: saltutil.sync_all

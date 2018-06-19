@@ -1,3 +1,3 @@
 base:
   '*':
-    - join_command
+    - kubernetes
