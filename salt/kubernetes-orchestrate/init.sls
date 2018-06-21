@@ -62,7 +62,7 @@ sleep:
     - name: test.sleep
     - tgt: salt-master
     - arg:
-      - 160
+      - 170
     - require:
       - salt: create_master
 
