@@ -19,3 +19,15 @@ nginx-deployment-service:
     - name: nginx-service
     - source: salt://kubernetes-nginx/nginx-service.yaml
     - namespace: gce
+
+nginx-ingress:
+  file.managed:
+    - name: /root/nginx-ingress.yaml
+    - source: salt://kubernetes-nginx/nginx-ingress.yaml
+
+deploy-ingress:
+  cmd.run:
+    - name: kubectl create -f /root/nginx-ingress.yaml --namespace=gce
+    - unless: if [[ $(kubectl get ingress --namespace=gce 2>&1) == *"No resources found"* ]]; then exit 1;fi
+    - require:
+      - file: nginx-ingress
