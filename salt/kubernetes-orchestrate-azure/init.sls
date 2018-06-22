@@ -91,3 +91,13 @@ target_nodes_{{ node }}:
     - require:
       - salt: sleep
 {% endfor %}
+
+wait_for_website:
+  salt.function:
+    - name: cmd.run
+    - tgt: salt-master
+    - arg:
+      - while true; do curl www.example.com > /dev/null 2>&1 ; req=$?; if [[ $req -eq 0 ]]; then break; else sleep 2; fi; done
+    - timeout: 5
+    - require:
+      - salt: deploy_haproxy
