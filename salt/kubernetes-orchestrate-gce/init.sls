@@ -57,14 +57,38 @@ create_lb:
     - require:
       - salt: create_master
 
+check_kubernetes_master:
+  salt.function:
+    - name: cmd.run
+    - tgt: {{ master }}
+    - arg:
+      - while true; do if [[ $(kubectl get nodes 2>&1 | grep {{ master }}) == *"{{ master }}   Ready"* ]]; then exit 0; else sleep 5;fi; done
+    - timeout: 400
+    - require:
+      - salt: create_master
+      
+{% for node in nodes %}
+check_kubernetes_{{ node }}:
+  salt.function:
+    - name: cmd.run
+    - tgt: {{ master }}
+    - arg:
+      - while true; do if [[ $(kubectl get nodes 2>&1 | grep {{ node }}) == *"{{ node }}   Ready"* ]]; then exit 0; else sleep 5;fi; done
+    - timeout: 400
+    - require:
+      - salt: create_master
+{% endfor %}
+
 sleep:
   salt.function:
     - name: test.sleep
     - tgt: salt-master
     - arg:
-      - 170
+      - 5
+    - timeout: 5
     - require:
       - salt: create_master
+      - salt: check_kubernetes_master
 
 deploy_nginx:
   salt.state:
